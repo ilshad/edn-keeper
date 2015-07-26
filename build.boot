@@ -1,9 +1,9 @@
-(def +version+ "0.1.0")
+(def +version+ "0.1.0-SNAPSHOT")
 
 (task-options!
   pom {:project 'ilshad/edn-keeper
        :version +version+
-       :description "Keeping EDN in Amazon S3 or local disk"
+       :description "Backing EDN with Amazon S3"
        :url "https://github.com/ilshad/edn-keeper"
        :scm {:url "https://github.com/ilshad/edn-keeper"}
        :license {"Eclipse Public License"
@@ -27,9 +27,3 @@
 
 (defn test-env! []
   (merge-env! :source-paths #{"test"}))
-
-(deftask clojars-snapshot []
-  (comp (build-jar) (push-snapshot)))
-
-(deftask clojars-release []
-  (comp (build-jar) (push-release)))
