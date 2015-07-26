@@ -23,7 +23,7 @@
 (require '[adzerk.bootlaces :refer :all])
 (require '[adzerk.boot-test :refer :all])
 
-(bootlaces! +version+)
-
 (defn test-env! []
   (merge-env! :source-paths #{"test"}))
+
+(bootlaces! +version+)

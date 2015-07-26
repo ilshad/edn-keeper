@@ -13,3 +13,6 @@
 (defn download-edn [bucket key]
   (let [object (s3/get-object bucket key)]
     (util/stream->edn (:input-stream object))))
+
+(defn list-keys [bucket]
+  (map :key (:object-summaries (s3/list-objects bucket))))
