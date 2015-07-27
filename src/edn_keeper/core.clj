@@ -18,24 +18,19 @@
         (q/complete! task))
       (recur))))
 
-(defn- start-queue [config uploader]
-  (let [queue (q/queues (:queue-dir config "/tmp") {})]
-    (start-uploader queue uploader)
-    queue))
-
 (defmulti keeper :storage)
 
-(defmethod keeper :fs [config]
-  (let [queue (start-queue config (partial fs/save-edn (:path config)))]
-    (reify IKeeper
-      (put  [_ key data] (q/put! queue ::save [key data]))
-      (get  [_ key]      (fs/load-edn (:path config) key))
-      (keys [_]          (fs/list-keys (:path config))))))
-
 (defmethod keeper :s3 [config]
-  (let [queue (start-queue config (partial s3/upload-edn (:bucket config)))]
+  (let [queue (q/queues (:queue-dir config "/tmp") {})]
+    (start-uploader queue (partial s3/upload-edn (:bucket config)))
     (reify IKeeper
       (put  [_ key data] (q/put! queue ::save [key data]))
       (get  [_ key]      (s3/download-edn (:bucket config) key))
-      (keys [_]          (s3/list-keys (:bucket config))))))
+      (keys [_]          (s3/list-keys    (:bucket config))))))
+
+(defmethod keeper :fs [config]
+  (reify IKeeper
+    (put  [_ key data] (fs/save-edn  (:path config) key data))
+    (get  [_ key]      (fs/load-edn  (:path config) key))
+    (keys [_]          (fs/list-keys (:path config)))))
 

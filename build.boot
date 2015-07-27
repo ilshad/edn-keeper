@@ -1,9 +1,9 @@
-(def +version+ "0.1.0-SNAPSHOT")
+(def +version+ "0.1.0")
 
 (task-options!
   pom {:project 'ilshad/edn-keeper
        :version +version+
-       :description "Backing EDN with Amazon S3"
+       :description "Backing EDN with filesystem or Amazon S3"
        :url "https://github.com/ilshad/edn-keeper"
        :scm {:url "https://github.com/ilshad/edn-keeper"}
        :license {"Eclipse Public License"
