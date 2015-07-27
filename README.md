@@ -4,6 +4,17 @@ Backing EDN data structures with Amazon S3 or local
 filesystem. Uploads to S3 use [durable queue](https://github.com/factual/durable-queue),
 so entries will survive process death.
 
+## Installation
+
+[![Clojars Project](http://clojars.org/ilshad/edn-keeper/latest-version.svg)](http://clojars.org/ilshad/edn-keeper)
+
+Add following to project's dependencies:
+
+```clojure
+[byte-streams "0.2.0"]
+[ilshad/edn-keeper "xxx"]
+```
+
 ## Usage
 
 First, define keeper object. Configure the storage with Amazon S3 or
