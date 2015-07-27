@@ -37,10 +37,10 @@ Keeper object implements `edn-keeper.core/IKeeper` protocol.
 (k/put keeper "my-key" {:foo [bar 42]})
 
 ;; List partitions
-(println (k/keys keeper))
+(k/keys keeper)
 
 ;; Download partition form the storage and read EDN
-(println (k/get keeper "my-key"))
+(k/get keeper "my-key")
 ```
 
 ## License
