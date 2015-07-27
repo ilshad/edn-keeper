@@ -1,6 +1,7 @@
 (ns edn-keeper.core
   (:refer-clojure :exclude [get keys])
   (:require [durable-queue :as q]
+            [edn-keeper.fs :as fs]
             [edn-keeper.s3 :as s3]))
 
 (defprotocol IKeeper
@@ -17,10 +18,24 @@
         (q/complete! task))
       (recur))))
 
-(defn s3-keeper [config]
+(defn- start-queue [config uploader]
   (let [queue (q/queues (:queue-dir config "/tmp") {})]
-    (start-uploader queue (partial s3/upload-edn (:s3-bucket config)))
+    (start-uploader queue uploader)
+    queue))
+
+(defmulti keeper :storage)
+
+(defmethod keeper :fs [config]
+  (let [queue (start-queue config (partial fs/save-edn (:path config)))]
     (reify IKeeper
       (put  [_ key data] (q/put! queue ::save [key data]))
-      (get  [_ key]      (s3/download-edn (:s3-bucket config) key))
-      (keys [_]          (s3/list-keys (:s3-bucket config))))))
+      (get  [_ key]      (fs/load-edn (:path config) key))
+      (keys [_]          (fs/list-keys (:path config))))))
+
+(defmethod keeper :s3 [config]
+  (let [queue (start-queue config (partial s3/upload-edn (:bucket config)))]
+    (reify IKeeper
+      (put  [_ key data] (q/put! queue ::save [key data]))
+      (get  [_ key]      (s3/download-edn (:bucket config) key))
+      (keys [_]          (s3/list-keys (:bucket config))))))
+

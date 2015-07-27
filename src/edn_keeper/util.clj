@@ -8,4 +8,3 @@
 
 (defn stream->edn [input-stream]
   (edn/read-string (slurp input-stream)))
-
